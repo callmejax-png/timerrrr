@@ -127,41 +127,10 @@
       50% { transform: scale(1.2); background-color: rgba(255,255,255,0.5); }
       100% { transform: scale(1); background-color: rgba(255,255,255,0.15); }
     }
-    .audio-controls {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      display: flex;
-      gap: 10px;
-      z-index: 10;
-    }
-    .audio-controls button {
-      background: rgba(255,255,255,0.2);
-      border: none;
-      color: white;
-      padding: 5px 10px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 14px;
-      transition: background 0.3s;
-      user-select: none;
-    }
-    .audio-controls button:hover {
-      background: rgba(255,255,255,0.4);
-    }
   </style>
 </head>
 <body onclick="incrementCounter()">
   <div id="tsparticles"></div>
-
-  <audio id="bgm" loop>
-    <source src="https://ia800905.us.archive.org/14/items/LegendsNeverDie_201905/Legends%20Never%20Die.mp3" type="audio/mpeg" />
-  </audio>
-
-  <div class="audio-controls">
-    <button onclick="togglePlay(event)" id="playBtn">Play</button>
-    <button onclick="toggleMute(event)" id="muteBtn">Mute</button>
-  </div>
 
   <div class="subheading">End of Tawjihi 🎓</div>
   <h1>06 / 07 / 2025 - 3:00 PM</h1>
@@ -203,39 +172,13 @@
   <script>
     let lastHour, lastDay, lastWeek;
     let clickCount = 0;
-    let bgmStarted = false;
-
-    const bgm = document.getElementById("bgm");
-    const playBtn = document.getElementById("playBtn");
-    const muteBtn = document.getElementById("muteBtn");
 
     function incrementCounter() {
-      if (!bgmStarted) {
-        bgm.play();
-        bgmStarted = true;
-      }
       clickCount++;
       const counter = document.getElementById("clickCounter");
       counter.innerText = `Clicks: ${clickCount}`;
       counter.classList.add("animate");
       setTimeout(() => counter.classList.remove("animate"), 300);
-    }
-
-    function togglePlay(event) {
-      event.stopPropagation();
-      if (bgm.paused) {
-        bgm.play();
-        playBtn.textContent = "Pause";
-      } else {
-        bgm.pause();
-        playBtn.textContent = "Play";
-      }
-    }
-
-    function toggleMute(event) {
-      event.stopPropagation();
-      bgm.muted = !bgm.muted;
-      muteBtn.textContent = bgm.muted ? "Unmute" : "Mute";
     }
 
     function showParticles(color = "#ffffff") {
@@ -261,7 +204,6 @@
       if (diff <= 0) {
         document.querySelector(".countdown").style.display = "none";
         document.getElementById("finalMessage").style.display = "block";
-        bgm.pause();
         showParticles(["#00ffcc", "#ffe8a3"]);
         return;
       }
