@@ -1,19 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Countdown to July 6</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/tsparticles@3/tsparticles.bundle.min.js"></script>
   <style>
     * {
       box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+      margin: 0; padding: 0;
       font-family: 'Poppins', sans-serif;
     }
-
     body {
       height: 100vh;
       background: linear-gradient(135deg, #1f1c2c, #928DAB);
@@ -27,28 +25,22 @@
       overflow: hidden;
       position: relative;
     }
-
     #tsparticles {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       z-index: -1;
     }
-
     h1 {
       font-size: 2.5rem;
       margin-bottom: 10px;
       transition: all 0.3s ease-in-out;
     }
-
     .subheading {
       font-size: 1.1rem;
       margin-bottom: 20px;
       opacity: 0.85;
     }
-
     .countdown {
       display: flex;
       flex-wrap: wrap;
@@ -56,53 +48,46 @@
       gap: 20px;
       margin-top: 10px;
     }
-
     .time-box {
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255,255,255,0.1);
       border-radius: 20px;
       padding: 15px;
       backdrop-filter: blur(10px);
-      box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+      box-shadow: 0 0 20px rgba(255,255,255,0.2);
       transition: transform 0.3s;
       min-width: 80px;
+      cursor: default;
+      user-select: none;
     }
-
     .time-box.animate {
       animation: glow 1s infinite alternate;
     }
-
     @keyframes glow {
       from { box-shadow: 0 0 10px #fff; }
       to { box-shadow: 0 0 30px #00ffcc; transform: scale(1.05); }
     }
-
     .time {
       font-size: 2rem;
       font-weight: bold;
     }
-
     .label {
       font-size: 0.9rem;
       opacity: 0.8;
     }
-
     .footer {
       position: absolute;
       bottom: 20px;
       font-size: 1rem;
       opacity: 0.7;
     }
-
     .footer a {
       color: #ffffff;
       text-decoration: none;
       font-weight: bold;
     }
-
     .footer a:hover {
       text-decoration: underline;
     }
-
     .message {
       margin-top: 30px;
       font-size: 1.5rem;
@@ -110,7 +95,6 @@
       font-weight: bold;
       animation: fadeIn 2s ease-in;
     }
-
     .ayah {
       margin-top: 10px;
       font-size: 1.2rem;
@@ -118,12 +102,10 @@
       font-style: italic;
       animation: fadeIn 3s ease-in;
     }
-
     @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+      from {opacity: 0;}
+      to {opacity: 1;}
     }
-
     .click-counter {
       position: absolute;
       bottom: 10px;
@@ -135,26 +117,55 @@
       user-select: none;
       cursor: pointer;
       transition: transform 0.2s, background-color 0.2s;
+      z-index: 10;
     }
-
     .click-counter.animate {
       animation: clickPulse 0.3s ease;
     }
-
     @keyframes clickPulse {
       0% { transform: scale(1); background-color: rgba(255,255,255,0.3); }
       50% { transform: scale(1.2); background-color: rgba(255,255,255,0.5); }
       100% { transform: scale(1); background-color: rgba(255,255,255,0.15); }
     }
+    .audio-controls {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      gap: 10px;
+      z-index: 10;
+    }
+    .audio-controls button {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.3s;
+      user-select: none;
+    }
+    .audio-controls button:hover {
+      background: rgba(255,255,255,0.4);
+    }
   </style>
 </head>
 <body onclick="incrementCounter()">
   <div id="tsparticles"></div>
+
   <audio id="bgm" loop>
-    <source src="https://ia800905.us.archive.org/14/items/LegendsNeverDie_201905/Legends%20Never%20Die.mp3" type="audio/mpeg">
+    <source src="https://ia800905.us.archive.org/14/items/LegendsNeverDie_201905/Legends%20Never%20Die.mp3" type="audio/mpeg" />
   </audio>
+
+  <div class="audio-controls">
+    <button onclick="togglePlay(event)" id="playBtn">Play</button>
+    <button onclick="toggleMute(event)" id="muteBtn">Mute</button>
+  </div>
+
   <div class="subheading">End of Tawjihi 🎓</div>
   <h1>06 / 07 / 2025 - 3:00 PM</h1>
+
   <div class="countdown">
     <div class="time-box" id="weeks-box">
       <div class="time" id="weeks">00</div>
@@ -194,9 +205,13 @@
     let clickCount = 0;
     let bgmStarted = false;
 
+    const bgm = document.getElementById("bgm");
+    const playBtn = document.getElementById("playBtn");
+    const muteBtn = document.getElementById("muteBtn");
+
     function incrementCounter() {
       if (!bgmStarted) {
-        document.getElementById("bgm").play();
+        bgm.play();
         bgmStarted = true;
       }
       clickCount++;
@@ -204,6 +219,23 @@
       counter.innerText = `Clicks: ${clickCount}`;
       counter.classList.add("animate");
       setTimeout(() => counter.classList.remove("animate"), 300);
+    }
+
+    function togglePlay(event) {
+      event.stopPropagation();
+      if (bgm.paused) {
+        bgm.play();
+        playBtn.textContent = "Pause";
+      } else {
+        bgm.pause();
+        playBtn.textContent = "Play";
+      }
+    }
+
+    function toggleMute(event) {
+      event.stopPropagation();
+      bgm.muted = !bgm.muted;
+      muteBtn.textContent = bgm.muted ? "Unmute" : "Mute";
     }
 
     function showParticles(color = "#ffffff") {
@@ -215,9 +247,9 @@
           size: { value: 3 },
           move: { enable: true, speed: 2 },
           color: { value: color },
-          opacity: { value: 0.7 }
+          opacity: { value: 0.7 },
         },
-        detectRetina: true
+        detectRetina: true,
       });
     }
 
@@ -229,7 +261,7 @@
       if (diff <= 0) {
         document.querySelector(".countdown").style.display = "none";
         document.getElementById("finalMessage").style.display = "block";
-        document.getElementById("bgm").pause();
+        bgm.pause();
         showParticles(["#00ffcc", "#ffe8a3"]);
         return;
       }
@@ -247,11 +279,11 @@
       const days = diff % 7;
       const weeks = Math.floor(diff / 7);
 
-      document.getElementById("weeks").textContent = String(weeks).padStart(2, '0');
-      document.getElementById("days").textContent = String(days).padStart(2, '0');
-      document.getElementById("hours").textContent = String(hours).padStart(2, '0');
-      document.getElementById("minutes").textContent = String(minutes).padStart(2, '0');
-      document.getElementById("seconds").textContent = String(seconds).padStart(2, '0');
+      document.getElementById("weeks").textContent = String(weeks).padStart(2, "0");
+      document.getElementById("days").textContent = String(days).padStart(2, "0");
+      document.getElementById("hours").textContent = String(hours).padStart(2, "0");
+      document.getElementById("minutes").textContent = String(minutes).padStart(2, "0");
+      document.getElementById("seconds").textContent = String(seconds).padStart(2, "0");
 
       document.getElementById("weeks-box").classList.toggle("animate", weeks === 0);
       document.getElementById("days-box").classList.toggle("animate", days === 0);
