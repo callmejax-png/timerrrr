@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Countdown to July 6</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/tsparticles@3/tsparticles.bundle.min.js"></script>
   <style>
     * {
       box-sizing: border-box;
@@ -23,6 +24,17 @@
       justify-content: center;
       text-align: center;
       padding: 20px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    #tsparticles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
     }
 
     h1 {
@@ -55,8 +67,13 @@
       min-width: 80px;
     }
 
-    .time-box:hover {
-      transform: scale(1.05);
+    .time-box.animate {
+      animation: glow 1s infinite alternate;
+    }
+
+    @keyframes glow {
+      from { box-shadow: 0 0 10px #fff; }
+      to { box-shadow: 0 0 30px #00ffcc; transform: scale(1.05); }
     }
 
     .time {
@@ -85,29 +102,77 @@
     .footer a:hover {
       text-decoration: underline;
     }
+
+    .message {
+      margin-top: 30px;
+      font-size: 1.5rem;
+      color: #00ffcc;
+      font-weight: bold;
+      animation: fadeIn 2s ease-in;
+    }
+
+    .ayah {
+      margin-top: 10px;
+      font-size: 1.2rem;
+      color: #ffe8a3;
+      font-style: italic;
+      animation: fadeIn 3s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .click-counter {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 10px 15px;
+      border-radius: 10px;
+      font-size: 14px;
+      user-select: none;
+      cursor: pointer;
+      transition: transform 0.2s, background-color 0.2s;
+    }
+
+    .click-counter.animate {
+      animation: clickPulse 0.3s ease;
+    }
+
+    @keyframes clickPulse {
+      0% { transform: scale(1); background-color: rgba(255,255,255,0.3); }
+      50% { transform: scale(1.2); background-color: rgba(255,255,255,0.5); }
+      100% { transform: scale(1); background-color: rgba(255,255,255,0.15); }
+    }
   </style>
 </head>
-<body>
+<body onclick="incrementCounter()">
+  <div id="tsparticles"></div>
+  <audio id="bgm" autoplay loop>
+    <source src="https://ia800905.us.archive.org/14/items/LegendsNeverDie_201905/Legends%20Never%20Die.mp3" type="audio/mpeg">
+  </audio>
   <div class="subheading">End of Tawjihi 🎓</div>
-  <h1>06 / 07 / 2025 - 12:00 PM</h1>
+  <h1>06 / 07 / 2025 - 3:00 PM</h1>
   <div class="countdown">
-    <div class="time-box">
+    <div class="time-box" id="weeks-box">
       <div class="time" id="weeks">00</div>
       <div class="label">أسابيع</div>
     </div>
-    <div class="time-box">
+    <div class="time-box" id="days-box">
       <div class="time" id="days">00</div>
       <div class="label">أيام</div>
     </div>
-    <div class="time-box">
+    <div class="time-box" id="hours-box">
       <div class="time" id="hours">00</div>
       <div class="label">ساعات</div>
     </div>
-    <div class="time-box">
+    <div class="time-box" id="minutes-box">
       <div class="time" id="minutes">00</div>
       <div class="label">دقائق</div>
     </div>
-    <div class="time-box">
+    <div class="time-box" id="seconds-box">
       <div class="time" id="seconds">00</div>
       <div class="label">ثواني</div>
     </div>
@@ -117,19 +182,54 @@
     <strong>Omar Alhlal</strong> - <a href="https://instagram.com/wh3.t" target="_blank">@wh3.t</a>
   </div>
 
+  <div id="finalMessage" style="display:none">
+    <div class="message">مبروك نهاية الدراسة، بداية حلم جديد 🌟</div>
+    <div class="ayah">﴿ وَمَا تَوْفِيقِي إِلَّا بِاللَّهِ ﴾</div>
+  </div>
+
+  <div class="click-counter" id="clickCounter">Clicks: 0</div>
+
   <script>
+    let lastHour, lastDay, lastWeek;
+    let clickCount = 0;
+
+    function incrementCounter() {
+      clickCount++;
+      const counter = document.getElementById("clickCounter");
+      counter.innerText = `Clicks: ${clickCount}`;
+      counter.classList.add("animate");
+      setTimeout(() => counter.classList.remove("animate"), 300);
+    }
+
+    function showParticles(color = "#ffffff") {
+      tsParticles.load("tsparticles", {
+        fullScreen: { enable: true },
+        particles: {
+          number: { value: 80 },
+          shape: { type: "circle" },
+          size: { value: 3 },
+          move: { enable: true, speed: 2 },
+          color: { value: color },
+          opacity: { value: 0.7 }
+        },
+        detectRetina: true
+      });
+    }
+
     function countdown() {
       const now = new Date().getTime();
-      const target = new Date("2025-07-06T12:00:00+03:00").getTime();
+      const target = new Date("2025-07-06T15:00:00+03:00").getTime();
       let diff = target - now;
 
       if (diff <= 0) {
-        document.querySelector(".countdown").innerHTML = "انتهى الوقت!";
+        document.querySelector(".countdown").style.display = "none";
+        document.getElementById("finalMessage").style.display = "block";
+        document.getElementById("bgm").pause();
+        showParticles(["#00ffcc", "#ffe8a3"]);
         return;
       }
 
       diff = Math.floor(diff / 1000);
-
       const seconds = diff % 60;
       diff = Math.floor(diff / 60);
 
@@ -147,6 +247,23 @@
       document.getElementById("hours").textContent = String(hours).padStart(2, '0');
       document.getElementById("minutes").textContent = String(minutes).padStart(2, '0');
       document.getElementById("seconds").textContent = String(seconds).padStart(2, '0');
+
+      document.getElementById("weeks-box").classList.toggle("animate", weeks === 0);
+      document.getElementById("days-box").classList.toggle("animate", days === 0);
+      document.getElementById("hours-box").classList.toggle("animate", hours === 0);
+
+      if (lastHour !== hours) {
+        showParticles("#00ffcc");
+        lastHour = hours;
+      }
+      if (lastDay !== days) {
+        showParticles("#ffe8a3");
+        lastDay = days;
+      }
+      if (lastWeek !== weeks) {
+        showParticles("#ffffff");
+        lastWeek = weeks;
+      }
     }
 
     countdown();
